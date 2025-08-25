@@ -1,0 +1,15 @@
+{
+	"name": "@mountain/treeview",
+	"version": "0.0.1",
+	"main": "index.js",
+	"exports": {
+		".": {
+			"import": "./index.js"
+		}
+	},
+	"devDependencies": {
+		"@tailwindcss/vite": "^4.1.4",
+		"@tailwindcss/postcss": "^4.1.4",
+		"tailwindcss": "^4.1.4"
+	}
+}
