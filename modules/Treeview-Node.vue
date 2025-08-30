@@ -5,23 +5,26 @@
 		class="flex items-center font-mono text-sm cursor-pointer select-none leading-[1.2] hover:text-blue-600"
 		@click.stop="toggle"
 	>
-		<!-- Tree bar structures as utf8-characters (└── , ├── etc) -->
-		<span class="whitespace-pre text-gray-500 lines-fontsize lines-margin-y">
-			{{ prefix }}
-		</span>
+		<!-- Tree lines (└ , ├ etc) -->
+		<treeview-icon
+			v-for="line in prefix"
+			:type="line"
+			:lines-size="linesSize"
+			:lines-width="linesWidth"
+		/>
 		
 		<!-- Expandable / collapsable sign -->
-		<span v-if="isObject" class="w-4 text-center mr-1 font-bold text-gray-600">
+		<span v-if="isObject" :style="{ width: linesSize }" class="flex justify-center items-center mr-1 font-bold text-gray-600">
 			<span v-if="toggleChar" class="node-fontsize">{{ expanded ? '−' : '+' }}</span>
 			<treeview-icon v-if="! toggleChar && expanded" type="minus-square" />
 			<treeview-icon v-else-if="! toggleChar && ! expanded" type="plus-square" />
 		</span>
-		<span v-else class="w-4 mr-1"></span>
+		<span v-else :style="{ width: linesSize }" class="mr-1"></span>
 		
 		<!-- Node label -->
 		<span
 			:class="[
-				'text-gray-800 node-fontsize',
+				'text-gray-800 text-[',
 				{
 					'ml-[-0.9rem]': ! isObject,
 					'bg-primary-300 rounded px-1': selected === currentPath,
@@ -92,6 +95,14 @@ export default {
 			type: Boolean,
 			default: () => false,
 		},
+		linesSize: {
+			type: String,
+			default: () => '25px',
+		},
+		linesWidth: {
+			type: [ String, Number ],
+			default: () => 1,
+		},
 		fontSize: {
 			type: String,
 			default: () => '14px',
@@ -122,9 +133,9 @@ export default {
 			return [ ...this.ancestors, ! this.isLast ];
 		},
 		prefix() {
-			const parts = this.ancestors.map( showLine => showLine ? '│   ' : '    ' );
-			parts.push( this.isLast ? '└── ' : '├── ' );
-			return parts.join( '' );
+			const parts = this.ancestors.map( showLine => showLine ? 'I' : 'none' );
+			parts.push( this.isLast ? 'L' : 'T' );
+			return parts;
 		},
 		
 		currentPath() {
@@ -196,16 +207,6 @@ export default {
 
 <style scoped>
 
-.lines-fontsize {
-	font-size: calc( 1.5 * v-bind( fontSize ) );
-}
-.lines-margin-y {
-	margin-top: calc( -1 * 1.5 * v-bind( fontSize ) / 7 );
-	margin-bottom: calc( -1 * 1.5 * v-bind( fontSize ) / 7 );
-}
 
-.node-fontsize {
-	font-size: v-bind( fontSize );
-}
 
 </style>
