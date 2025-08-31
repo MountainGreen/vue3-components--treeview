@@ -14,20 +14,30 @@
 		/>
 		
 		<!-- Expandable / collapsable sign -->
-		<span v-if="isObject" :style="{ width: linesSize }" class="flex justify-center items-center mr-1 font-bold text-gray-600">
+		<span v-if="isObject" :style="{ width: linesSize }" class="flex justify-center items-center ml-0.5 font-bold text-gray-600">
+			<!-- UTF-8 character for toggle sign -->
 			<span v-if="toggleChar" class="node-fontsize">{{ expanded ? '−' : '+' }}</span>
-			<treeview-icon v-if="! toggleChar && expanded" type="minus-square" />
-			<treeview-icon v-else-if="! toggleChar && ! expanded" type="plus-square" />
+			<!-- SVG icon for toggle sign 'open' -->
+			<treeview-icon
+				v-if="! toggleChar && ! expanded"
+				type="plus-square"
+				:toggle-size="toggleSize"
+			/>
+			<!-- SVG icon for toggle sign 'close' -->
+			<treeview-icon
+				v-else-if="! toggleChar && expanded"
+				type="minus-square"
+				:toggle-size="toggleSize"
+			/>
 		</span>
-		<span v-else :style="{ width: linesSize }" class="mr-1"></span>
 		
 		<!-- Node label -->
 		<span
 			:class="[
-				'text-gray-800 text-[',
+				'px-2 py-0.5 text-gray-800',
 				{
-					'ml-[-0.9rem]': ! isObject,
-					'bg-primary-300 rounded px-1': selected === currentPath,
+					'ml-2': ! isObject,
+					'bg-primary text-iconcurrent rounded-sm': selected === currentPath,
 				},
 			]"
 			@click.stop="handleClick"
@@ -91,10 +101,6 @@ export default {
 		},
 		
 		// Options
-		toggleChar: {
-			type: Boolean,
-			default: () => false,
-		},
 		linesSize: {
 			type: String,
 			default: () => '25px',
@@ -102,6 +108,14 @@ export default {
 		linesWidth: {
 			type: [ String, Number ],
 			default: () => 1,
+		},
+		toggleChar: {
+			type: Boolean,
+			default: () => false,
+		},
+		toggleSize: {
+			type: String,
+			default: () => '25px',
 		},
 		fontSize: {
 			type: String,
@@ -158,8 +172,8 @@ export default {
 				: [];
 			
 			this.$emit( 'node-click', {
-				path: currentPath,
-				children: childrenPaths,
+				path: ( this.selected !== this.currentPath ) ? currentPath : null,
+				children: ( this.selected !== this.currentPath ) ? childrenPaths : [],
 			} )
 		},
 		
